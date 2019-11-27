@@ -37,3 +37,24 @@ x_i=math.exp(-(h_fg/R)*((1/T_int)-(1/T_boil)))
 
 #T_boil=Punto de fusión a presión atmosférica (P_atm)
 #
+
+#--------Resistencia de Interfase líquido-gas----------------------------
+
+R_int=1/(h_i*2*math.pi*(r**2)*(1-math.cos(theta)))
+
+#h_i=Coeficiente interfacial de transferencia de Calor
+#r=radio de la gota
+#theta=Ángulo de contacto
+
+#--Definición de h_i (coeficiente interfacial)
+
+h_i=((2*alfa)/(2-alfa))*(1/math.sqrt(2*math.pi*R_g*T_s))*((h_fg**2)/v_g*T_s)
+
+#alfa=Coeficiente de acomodación o condensación;
+# fracción de moléculas de vapor que se mueven en la gota líquida durante el cambio de fase
+#debe ser de entre 0.02 a 0.04 para agua. En Wrikamanayake et al. se usó 0.02
+#T_s=Temperatura de superficie(no está claro)
+
+#-----Resistencia a la conducción de las gotas-------
+
+R_cond
