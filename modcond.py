@@ -1,5 +1,6 @@
 import numpy as np
-import pandas as pd
+import scipy
+import scipy.integrate as integrate
 import math
 #Método de resistencias
 #Se irán haciendo las resistencias desde el exterior de la gota hasta el sustrato
@@ -57,4 +58,25 @@ h_i=((2*alfa)/(2-alfa))*(1/math.sqrt(2*math.pi*R_g*T_s))*((h_fg**2)/v_g*T_s)
 
 #-----Resistencia a la conducción de las gotas-------
 
-R_cond
+R_drop=theta/(4*math.pi*k1*r*math.sin(theta))
+
+#k=Conductividad térmica del agua
+
+#-----------RESISTENCIA TÉRMICA TOTAL---------------
+
+R_total=(((1/R_dif)+(1/R_cond_aire))**(-1))+R_int+R_drop
+
+#-----TRANSFERENCIA DE CALOR DEPENDIENTE DEL RADIO DE LA GOTA----------
+
+q=(T_amb-T_s)/R_total
+
+#-----FLUJO DE CALOR EN LA SUPERFICIE CONOCIENDO LA DISTRIBUCIÓN DE GOTAS
+
+from scipy.intgrate import quad
+
+def f(r):
+    return q(r)*N(r) # está incompleta
+
+i, err= quad(f, r_min, r_max)
+print (i)
+print (err)
