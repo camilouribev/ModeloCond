@@ -26,18 +26,20 @@ def R_cond_aire_Wrikamanayake (K_aire, delta, S_r):
     R_cond_aire=delta/(k_aire*S_r)
     return R_cond_aire
 
-def Capa_limite (h_fg, R, T_int, T_boil,D, M, c, x_i, x_a, Delta):
+def Capa_limite (h_fg, R, T_int, T_boil, RH,P_sat, P_amb, D, M, c, x_i, x_a, Delta):
 #------Inicialmente, Ecuación Clausius-Clapeyron para determinar x_i, termino necesario------------------
     #T_boil=Punto de fusión a presión atmosférica (P_atm)
-    #R= 
+    #R=
 
     x_i=math.exp(-(h_fg/R)*((1/T_int)-(1/T_boil)))
+    #x_a=Fracción molar en el agua, determinada por las condiciones ambientales
 
+    x_a=RH**(P_sat/P_amb)
 #-------Igualdad de la tasa de condensación a la de difusión de masa para hallar la aproximación de -----
     #D= coeficiente de difusión del vapor de agua en el aire
     #M= peso molecular del agua
     #x_i= Fraccion molar en la interfase líquido-vapor de la gota determinada por la ecuación de Clausius-Clapeyron
-    #x_a=Fracción molar en el agua, determinada por las condiciones ambiente
+
     #c= concentracion
 
     delta=-D*M*c*((x_i-x_a)/t_c
