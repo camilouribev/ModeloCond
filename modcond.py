@@ -3,6 +3,8 @@ import scipy
 import scipy.integrate as integrate
 import math
 
+
+
 #Método de resistencias
 #Se irán haciendo las resistencias desde el exterior de la gota hasta el sustrato
 def R_dif_Wrikamaniyake (T_amb, T_int, t_c, h_fg):
@@ -12,7 +14,7 @@ def R_dif_Wrikamaniyake (T_amb, T_int, t_c, h_fg):
 #T_amb=Temperatura ambiente
 #T_int=Temperatura de la gota
 #t_c=Tasa de condensación. Hallada experimentalmente
-#h_fg= Calor latente de condensación
+#h_fg= Calor latente de condensación J/kg
 
     R_dif=(T_amb-T_int)/(t_c*h_fg)
     return R_dif
@@ -45,23 +47,32 @@ def Capa_limite (h_fg, R, T_int, T_boil, RH,P_sat, P_amb, D, M, c, x_i, x_a, Del
     delta=-D*M*c*((x_i-x_a)/t_c
     return delta
 
-#--------Resistencia de Interfase líquido-gas----------------------------
-
-R_int=1/(h_i*2*math.pi*(r**2)*(1-math.cos(theta)))
-
-#h_i=Coeficiente interfacial de transferencia de Calor
-#r=radio de la gota
-#theta=Ángulo de contacto
+def R_int_liq_Wrikamanayake (r, h_i, theta, alfa, T_s):
 
 #--Definición de h_i (coeficiente interfacial)
 
-h_i=((2*alfa)/(2-alfa))*(1/math.sqrt(2*math.pi*R_g*T_s))*((h_fg**2)/v_g*T_s)
+    h_i=((2*alfa)/(2-alfa))*(1/math.sqrt(2*math.pi*R_g*T_s))*((h_fg**2)/v_g*T_s)
 
-#alfa=Coeficiente de acomodación o condensación;
-# fracción de moléculas de vapor que se mueven en la gota líquida durante el cambio de fase
-#debe ser de entre 0.02 a 0.04 para agua. En Wrikamanayake et al. se usó 0.02
-#T_s=Temperatura de superficie(no está claro)
+    #alfa=Coeficiente de acomodación o condensación;
+    # fracción de moléculas de vapor que se mueven en la gota líquida durante el cambio de fase
+    #debe ser de entre 0.02 a 0.04 para agua. En Wrikamanayake et al. se usó 0.02
+    #T_s=Temperatura de superficie de pared K
 
+    #R_g: Constante específica de los gases J/(Kg K)
+    #v_g: Volumen especifico del vapor de agua m3/Kg
+    #h_fg: Calor latente de vaporización J/Kg
+
+#--------Resistencia de Interfase líquido-gas----------------------------
+
+    R_int=1/(h_i*2*math.pi*(r**2)*(1-math.cos(theta)))
+
+    #h_i=Coeficiente interfacial de transferencia de Calor
+    #r=radio de la gota
+    #theta=Ángulo de contacto
+
+    return R_int
+
+def R_cond_gotas_Wrikamaniyake()
 #-----Resistencia a la conducción de las gotas-------
 
 R_drop=theta/(4*math.pi*k1*r*math.sin(theta))
@@ -78,7 +89,7 @@ q=(T_amb-T_s)/R_total
 
 #-----FLUJO DE CALOR EN LA SUPERFICIE CONOCIENDO LA DISTRIBUCIÓN DE GOTAS
 
-from scipy.intgrate import quad
+from scipy.integrate import quad
 
 def f(r):
     return q(r)*N(r) # está incompleta
