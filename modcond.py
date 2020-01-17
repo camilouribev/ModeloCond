@@ -12,7 +12,7 @@ import scipy.integrate as integrate
 
 #T_int=Temperatura de la gota [K]
 
-#t_c=Tasa de condensación. Hallada experimentalmente
+#t_c=Tasa de condensación. Hallada experimentalmente [Kg/s]
 
 #h_fg= Calor latente de condensación [J/kg]
 
@@ -33,15 +33,14 @@ import scipy.integrate as integrate
 
 #T_s=Temperatura de superficie de pared [K]
 
-#h_i=Coeficiente interfacial de transferencia de Calor
 
 #r=radio de la gota [m]
 
 #theta=Ángulo de contacto [°]
 
-T_amb=
-T_int=
-t_c=
+T_amb=294.1
+T_int=294.1
+t_c=0.001
 h_fg=
 K_aire=
 delta=
@@ -51,11 +50,11 @@ v_g=
 h_fg=
 alfa=
 T_s=
-
+theta=
 
 #Método de resistencias
 #Se irán haciendo las resistencias desde el exterior de la gota hasta el sustrato
-def R_dif_Wrikamaniyake (T_amb, T_int, t_c, h_fg):
+def R_dif_Wrikamanayake (T_amb, T_int, t_c, h_fg):
 #----------------Resistencia a la difusión del vapor en la capa de no condensables [K/W]----------------
     R_dif=(T_amb-T_int)/(t_c*h_fg)
     return R_dif
@@ -92,26 +91,28 @@ def R_cond_aire_Wrikamanayake (K_aire, delta, S_r):
 def R_int_liq_Wrikamanayake (r, h_i, theta, alfa, T_s):
 
 #--Definición de h_i (coeficiente interfacial)
+#h_i=Coeficiente interfacial de transferencia de Calor
 
     h_i=((2*alfa)/(2-alfa))*(1/math.sqrt(2*math.pi*R_g*T_s))*((h_fg**2)/v_g*T_s)
-
 
 #--------Resistencia de Interfase líquido-gas [K/W]----------------------------
 
     R_int=1/(h_i*2*math.pi*(r**2)*(1-math.cos(theta)))
 
-
-
     return R_int
 
-def R_cond_gotas_Wrikamaniyake():
-#-----Resistencia a la conducción de las gotas-------
+def R_cond_gotas_Wrikamanayake(theta, k1, r):
+#-----Resistencia a la conducción de las gotas [K/W]-------
 
-R_drop=theta/(4*math.pi*k1*r*math.sin(theta))
+    R_drop=theta/(4*math.pi*k1*r*math.sin(theta))
 
-#k1=Conductividad térmica del agua
+    return R_drop
 
-#-----------RESISTENCIA TÉRMICA TOTAL---------------
+#-----------RESISTENCIA TÉRMICA TOTAL [K/W]---------------
+R_dif=R_dif_Wrikamanayake(T_amb, T_int ,t_c, h_fg)
+R_cond_aire=R_cond_aire_Wrikamanayake(K_aire, delta, S_r)
+R_int= R_int_liq_Wrikamanayake (r, h_i, theta, alfa, T_s)
+R_drop=R_cond_gotas_Wrikamanayake(theta, k1, r)
 
 R_total=(((1/R_dif)+(1/R_cond_aire))**(-1))+R_int+R_drop
 
@@ -119,13 +120,18 @@ R_total=(((1/R_dif)+(1/R_cond_aire))**(-1))+R_int+R_drop
 
 q=(T_amb-T_s)/R_total
 
-#-----FLUJO DE CALOR EN LA SUPERFICIE CONOCIENDO LA DISTRIBUCIÓN DE GOTAS
 
-from scipy.integrate import quad
 
-def f(r):
-    return q(r)*N(r) # está incompleta
 
-i, err= quad(f, r_min, r_max)
-print (i)
-print (err)
+print R_total
+
+# #-----FLUJO DE CALOR EN LA SUPERFICIE CONOCIENDO LA DISTRIBUCIÓN DE GOTAS
+#
+# from scipy.integrate import quad
+#
+# def f(r):
+#     return q(r)*N(r) # está incompleta
+#
+# i, err= quad(f, r_min, r_max)
+# print (i)
+# print (err)
